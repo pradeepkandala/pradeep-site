@@ -8,7 +8,7 @@ export default function AboutPage() {
       <section className="max-w-3xl mx-auto py-20 px-6 text-center">
         <h1 className="text-4xl font-bold mb-6">About Me</h1>
         <p className="text-lg leading-relaxed text-gray-700">
-          I’m Pradeep Kandala, a Senior Java Developer with 17 years of experience 
+          I&apos;m Pradeep Kandala, a Senior Java Developer with 17 years of experience 
           crafting APIs, automation frameworks, and scalable systems.
         </p>
         <p className="mt-6 text-lg leading-relaxed text-gray-700">
