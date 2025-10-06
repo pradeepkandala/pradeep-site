@@ -11,7 +11,7 @@ export default function ContactPage() {
           Whether it’s collaboration, mentorship, or just a great tech discussion — I’d love to connect.
         </p>
         <form
-          action="https://formspree.io/f/mnqwpjye" // Replace with your real Formspree endpoint later
+          action="https://formspree.io/f/mnqwpjye" 
           method="POST"
           className="space-y-4"
         >
@@ -44,7 +44,7 @@ export default function ContactPage() {
           </button>
         </form>
         <div className="mt-10 text-gray-700">
-          <p>📧 <a href="mailto:kpradeepster@gmail.com" className="text-blue-600 underline">pradeepkandala@gmail.com</a></p>
+          <p>📧 <a href="mailto:kpradeepster@gmail.com" className="text-blue-600 underline">kpradeepster@gmail.com</a></p>
           <p>🔗 <a href="https://www.linkedin.com/in/kpradeepster/" target="_blank" className="text-blue-600 underline">LinkedIn</a></p>
           <p>🐦 <a href="https://x.com/kpradeepster" target="_blank" className="text-blue-600 underline">Twitter (X)</a></p>
         </div>
