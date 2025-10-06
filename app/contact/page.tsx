@@ -11,7 +11,7 @@ export default function ContactPage() {
           Whether it’s collaboration, mentorship, or just a great tech discussion — I’d love to connect.
         </p>
         <form
-          action="https://formspree.io/f/mnqwpjye" 
+          action="https://formspree.io/f/mjkaoqgp" 
           method="POST"
           className="space-y-4"
         >
