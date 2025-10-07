@@ -1,28 +1,75 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import cytoscape from "cytoscape";
+
+// ⚠️ Remove this direct import:
+// import dagre from "cytoscape-dagre";
+// cytoscape.use(dagre);
 
 export default function FamilyTreePage() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [elements, setElements] = useState<any[]>([]);
+  const [layoutReady, setLayoutReady] = useState(false);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    import("cytoscape-dagre").then((dagre) => {
+      cytoscape.use(dagre.default);
+      console.log("✅ Dagre layout registered dynamically");
+      setLayoutReady(true);
+    });
+    async function fetchData() {
+      try {
+        // 🔹 Fetch relationships with nested person info
+        const res = await fetch("http://localhost:8080/api/relationships");
 
+        const data = await res.json();
+
+        const nodesMap = new Map<string, any>();
+        const edges: any[] = [];
+
+        data.forEach((rel: any) => {
+          const from = rel.fromPerson;
+          const to = rel.toPerson;
+
+          if (from && !nodesMap.has(from.id)) {
+            nodesMap.set(from.id, {
+              data: { id: from.id, label: `${from.givenName} ${from.familyName}`, gender: from.gender },
+            });
+          }
+          if (to && !nodesMap.has(to.id)) {
+            nodesMap.set(to.id, {
+              data: { id: to.id, label: `${to.givenName} ${to.familyName}`, gender: to.gender },
+            });
+          }
+
+          edges.push({
+            data: { source: from.id, target: to.id, label: rel.relType },
+          });
+        });
+
+        const allElements = [...Array.from(nodesMap.values()), ...edges];
+        setElements(allElements);
+      } catch (error) {
+        console.error("Error fetching relationships:", error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+  if (!containerRef.current || elements.length === 0 || !layoutReady) return;
+  
     const cy = cytoscape({
       container: containerRef.current,
-      elements: [
-        { data: { id: "krishna", label: "Krishna" } },
-        { data: { id: "arjuna", label: "Arjuna" } },
-        { data: { id: "bhima", label: "Bhima" } },
-        { data: { source: "krishna", target: "arjuna", label: "Guide" } },
-        { data: { source: "krishna", target: "bhima", label: "Brother-in-spirit" } },
-      ],
+      elements,
       style: [
         {
           selector: "node",
           style: {
-            "background-color": "#2563eb",
+            "background-color": (ele) =>
+              ele.data("gender") === "F" ? "#f472b6" : "#2563eb",
             label: "data(label)",
             color: "white",
             "font-weight": "bold",
@@ -33,7 +80,7 @@ export default function FamilyTreePage() {
         {
           selector: "edge",
           style: {
-            width: 3,
+            width: 2,
             "line-color": "#94a3b8",
             "target-arrow-color": "#94a3b8",
             "target-arrow-shape": "triangle",
@@ -43,11 +90,11 @@ export default function FamilyTreePage() {
           },
         },
       ],
-      layout: { name: "breadthfirst" },
+      layout: { name: "dagre", rankDir: "TB", padding: 20 },
     });
 
     return () => cy.destroy();
-  }, []);
+  }, [elements]);
 
   return (
     <div className="min-h-screen bg-white text-gray-800 p-8">
